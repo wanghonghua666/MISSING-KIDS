@@ -14,6 +14,7 @@ import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
+  
   const pages = await payload.find({
     collection: 'pages',
     draft: false,

@@ -18,5 +18,11 @@ export const Header: GlobalConfig = {
       ],
       maxRows: 6,
     },
+    {
+      name: "logo",
+      type: "upload",
+      relationTo: "media",
+      label: "Logo"
+    },
   ],
 }

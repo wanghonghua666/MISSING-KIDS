@@ -56,24 +56,10 @@ export const Pages: CollectionConfig = {
       required: true,
     },
     {
-      name: 'publishedOn',
-      type: 'date',
-      admin: {
-        date: {
-          pickerAppearance: 'dayAndTime',
-        },
-        position: 'sidebar',
-      },
-      hooks: {
-        beforeChange: [
-          ({ siblingData, value }) => {
-            if (siblingData._status === 'published' && !value) {
-              return new Date()
-            }
-            return value
-          },
-        ],
-      },
+      name: 'backgroundImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: '背景图'
     },
     {
       type: 'tabs',
