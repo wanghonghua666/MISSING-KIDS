@@ -20,8 +20,6 @@ body {
     min-height: 100vh;
     line-height: 1.6;
     position: relative;
-    display: flex;
-    flex-direction: column;
 }
 
 /* Header */
@@ -30,7 +28,7 @@ header {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    flex: 1;
+    min-height: 100vh;
     padding: 2rem;
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(0px);
@@ -50,6 +48,9 @@ header.header-blur {
     display: block;
     transition: filter 0.5s ease;
     filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 .logo:hover {
