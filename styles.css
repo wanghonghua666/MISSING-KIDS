@@ -20,6 +20,8 @@ body {
     min-height: 100vh;
     line-height: 1.6;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
@@ -28,7 +30,7 @@ header {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    flex: 1;
     padding: 2rem;
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(0px);
