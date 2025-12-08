@@ -60,13 +60,47 @@ export default async function Page({ params }: Args) {
     return notFound()
   }
 
-  const { hero, layout } = page
+  const { hero, layout, title, backgroundImage } = page
+
+  // 获取背景图片 URL
+  const backgroundImageUrl = backgroundImage && typeof backgroundImage === 'object' && 'url' in backgroundImage
+    ? backgroundImage.url
+    : null
 
   return (
-    <article className="pt-16 pb-24">
-      <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
-    </article>
+    <main
+      className="min-h-screen"
+      style={{
+        backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : 'none',
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      <div className="relative">
+        {/* 背景遮罩层（可选，提高文字可读性） */}
+        {backgroundImageUrl && (
+          <div className="absolute inset-0 bg-black/30" />
+        )}
+        
+        <article className="relative pt-16 pb-24">
+          {/* 显示标题 */}
+          {title && (
+            <div className="container mx-auto px-8 mb-8">
+              <h1 className="text-4xl font-bold text-white drop-shadow-lg">
+                {title}
+              </h1>
+            </div>
+          )}
+          
+          {/* Hero 区域 */}
+          <RenderHero {...hero} />
+          
+          {/* 内容块 */}
+          <RenderBlocks blocks={layout} />
+        </article>
+      </div>
+    </main>
   )
 }
 
@@ -91,6 +125,7 @@ const queryPageBySlug = async ({ slug }: { slug: string }) => {
     limit: 1,
     overrideAccess: draft,
     pagination: false,
+    depth: 2, // 确保获取关联的 media 数据（包括 backgroundImage）
     where: {
       and: [
         {

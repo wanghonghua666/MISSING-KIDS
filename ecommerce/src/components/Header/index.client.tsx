@@ -20,8 +20,32 @@ export function HeaderClient({ header }: Props) {
   const menu = header.navItems || []
   const pathname = usePathname()
 
+  // 获取 logo URL
+  const getLogoUrl = () => {
+    // 优先使用 header 中的 logo
+    if (header.logo && typeof header.logo === 'object') {
+      // 如果 logo 是对象，尝试获取 url
+      if ('url' in header.logo && header.logo.url) {
+        // 如果 url 是相对路径，添加服务器 URL
+        const url = header.logo.url as string
+        if (url.startsWith('/')) {
+          return `${process.env.NEXT_PUBLIC_SERVER_URL || ''}${url}`
+        }
+        return url
+      }
+      // 如果有 id，使用 API 获取
+      if ('id' in header.logo && header.logo.id) {
+        return `${process.env.NEXT_PUBLIC_SERVER_URL || ''}/api/media/${header.logo.id}`
+      }
+    }
+    // 如果没有，使用默认的 logo ID
+    return `${process.env.NEXT_PUBLIC_SERVER_URL || ''}/api/media/693305337f12910b2f184eed`
+  }
+
+  const logoUrl = getLogoUrl()
+
   return (
-    <div className="relative z-20 border-b">
+    <header className="relative z-20 bg-transparent border-none shadow-none !bg-transparent">
       <nav className="flex items-center md:items-end justify-between container pt-2">
         <div className="block flex-none md:hidden">
           <Suspense fallback={null}>
@@ -31,10 +55,10 @@ export function HeaderClient({ header }: Props) {
         <div className="flex w-full items-end justify-between">
           <div className="flex w-full items-end gap-6 md:w-1/3">
             <Link className="flex w-full items-center justify-center pt-4 pb-4 md:w-auto" href="/">
-              {header.logo && typeof header.logo === 'object' && 'url' in header.logo ? (
+              {logoUrl ? (
                 <img
-                  src={header.logo.url}
-                  alt={header.logo.alt || 'Logo'}
+                  src={logoUrl}
+                  alt="Logo"
                   className="h-10 w-auto"
                 />
               ) : (
@@ -69,6 +93,6 @@ export function HeaderClient({ header }: Props) {
           </div>
         </div>
       </nav>
-    </div>
+    </header>
   )
 }
