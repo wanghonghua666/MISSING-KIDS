@@ -4,12 +4,14 @@
     { "src": "styles.css", "use": "@vercel/static" },
     { "src": "script.js", "use": "@vercel/static" },
     { "src": "beijing.jpg", "use": "@vercel/static" },
+    { "src": "beijing1.png", "use": "@vercel/static" },
     { "src": "logo.png", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/styles.css", "dest": "/styles.css" },
     { "src": "/script.js", "dest": "/script.js" },
     { "src": "/beijing.jpg", "dest": "/beijing.jpg" },
+    { "src": "/beijing1.png", "dest": "/beijing1.png" },
     { "src": "/logo.png", "dest": "/logo.png" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
