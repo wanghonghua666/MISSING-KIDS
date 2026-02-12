@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #0a0e27;
+    --secondary: #f0f4ff;
+    --accent: #ef4444;
+    --neutral: #ffffff;
+    --text: #1a1a2e;
+    --muted: #9ca3af;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text);
+    background: url('/beijing.jpg') center/cover no-repeat fixed;
+    min-height: 100vh;
+    line-height: 1.6;
+    position: relative;
+}
+
+/* 移动设备使用不同的背景图片 */
+@media (max-width: 768px) {
+    body {
+        background: url('/beijing1.png') center/cover no-repeat fixed;
+    }
+}
+
+/* Header */
+header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.4s ease;
+    position: relative;
+    z-index: 10;
+}
+
+header.header-blur {
+    backdrop-filter: blur(12px);
+}
+
+/* Logo */
+.logo {
+    max-width: 120px;
+    height: auto;
+    display: block;
+    transition: filter 0.5s ease;
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    cursor: pointer;
+}
+
+.logo:hover {
+    filter: brightness(0) drop-shadow(0 8px 20px rgba(0, 0, 0, 0.5));
+}
+
+/* Header blur when logo is hovered */
+header.logo-hover-blur {
+    backdrop-filter: blur(12px);
+}
+
+/* Button */
+.cta-button {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background-color: var(--accent);
+    color: var(--neutral);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    background-color: #dc2626;
+    transform: translateY(-2px);
+}
+
+/* Footer */
+footer {
+    padding: 0.6rem 2rem;
+    text-align: center;
+    color: var(--neutral);
+    position: relative;
+    background: transparent;
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.4s ease;
+}
+
+footer.blurred {
+    backdrop-filter: blur(18px);
+    background: transparent;
+}
+
+.social-links {
+    margin: 1.5rem 0;
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.social-links a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+    text-transform: lowercase;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+}
+
+.social-links a:hover {
+    color: var(--neutral);
+}
+
+footer p {
+    font-size: 0.5rem;
+    color: #9ca3af;
+    margin-top: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header {
+        padding: 1.5rem;
+    }
+}
