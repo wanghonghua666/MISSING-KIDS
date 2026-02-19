@@ -1,148 +1,302 @@
 @import "tailwindcss";
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 :root {
-    --primary: #0a0e27;
-    --secondary: #f0f4ff;
-    --accent: #ef4444;
-    --neutral: #ffffff;
-    --text: #1a1a2e;
-    --muted: #9ca3af;
+  --mk-glass: rgba(255, 255, 255, 0.12);
+  --mk-accent: #ef4444;
+  --mk-muted: #9ca3af;
+  --mk-header-height: 142px;
+  --mk-header-pad-x: 56px;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: var(--text);
-    background: url('/beijing.jpg') center/cover no-repeat fixed;
-    min-height: 100vh;
-    line-height: 1.6;
-    position: relative;
+  font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-weight: 400;
+  color: #fff;
+  background: url("/beijing.png") center/cover no-repeat fixed;
+  min-height: 100vh;
 }
 
-/* 移动设备使用不同的背景图片 */
+/* ─── Glass ─── */
+.mk-glass {
+  background: var(--mk-glass);
+}
+
+.mk-glass-blur-18 {
+  background: transparent;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* ─── Header ─── */
+.mk-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  width: 100%;
+  height: var(--mk-header-height);
+  padding-left: var(--mk-header-pad-x);
+  padding-right: var(--mk-header-pad-x);
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+}
+
+.mk-logo-link {
+  width: 161px;
+  height: 98px;
+}
+
+.mk-desktop-nav {
+  display: flex;
+}
+
+.mk-mobile-menu {
+  display: none !important;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Mobile nav overlay */
+.mk-mobile-nav-overlay {
+  display: none;
+}
+
+.mk-mobile-nav-panel {
+  position: relative;
+  width: 80%;
+  max-width: 300px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  padding: 80px 32px 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mk-mobile-nav-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.mk-mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.mk-header-spacer {
+  height: var(--mk-header-height);
+  flex-shrink: 0;
+}
+
+/* ─── Footer ─── */
+.mk-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-height: 32px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 40;
+}
+
+.mk-socials {
+  width: 263px;
+  height: 22px;
+  padding-left: 100px;
+  padding-right: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.mk-socials a {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--mk-accent);
+}
+
+.mk-copyright {
+  width: 338px;
+  height: 12px;
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 400;
+  color: var(--mk-muted);
+}
+
+/* ─── Fonts ─── */
+.mk-mono {
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+
+/* ─── Product overlay ─── */
+.mk-product-overlay-box {
+  background: rgba(0, 0, 0, 0.9);
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* ─── Hover glow ─── */
+.mk-hover-bright {
+  transition: filter 0.2s ease, text-shadow 0.2s ease;
+}
+.mk-hover-bright:hover {
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(255, 255, 255, 0.3));
+  text-shadow: 0 0 7px currentColor, 0 0 12px rgba(239, 68, 68, 0.3);
+}
+
+/* ─── Page transitions ─── */
+
+/* home↔work: 只有 main 内容淡出淡入，header/footer 完全不参与 */
+.mk-content-enter {
+  animation: mkContentIn 260ms ease both;
+}
+
+/* exit 用 animation（比 transition 更可靠，避免与 enter animation fill 冲突） */
+.mk-content-exit {
+  animation: mkContentOut 220ms ease both;
+  pointer-events: none;
+}
+
+@keyframes mkContentIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mkContentOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* start→home 序列动画：header → footer → main */
+.mk-from-start .mk-header {
+  animation: mkFadeIn 800ms ease both;
+}
+.mk-from-start .mk-footer {
+  animation: mkFadeIn 800ms ease 150ms both;
+}
+.mk-from-start-main {
+  animation: mkFadeIn 700ms ease 850ms both;
+}
+
+@keyframes mkFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ─── Mobile only helpers (hidden on desktop) ─── */
+.mk-mobile-all-items { display: none; }
+
+/* ─── Mobile (≤768px) — based on pencil mobile frames ─── */
 @media (max-width: 768px) {
-    body {
-        background: url('/beijing1.png') center/cover no-repeat fixed;
-    }
-}
+  :root {
+    --mk-header-height: 60px;
+    --mk-header-pad-x: 16px;
+  }
 
-/* Header */
-header {
+  /* Header: glass blur on mobile (pencil: fill rgba(255,255,255,0.12) + blur 12) */
+  .mk-header {
+    background: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+
+  /* Logo container shrinks to fit mobile header */
+  .mk-logo-link {
+    width: 90px !important;
+    height: 41px !important;
+  }
+  .mk-logo-link img {
+    width: 80px !important;
+    height: auto !important;
+  }
+
+  /* Desktop nav hidden, hamburger shown */
+  .mk-desktop-nav  { display: none !important; }
+  .mk-mobile-menu  { display: flex !important; align-items: center; justify-content: center; }
+
+  /* Nav overlay */
+  .mk-mobile-nav-overlay {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(0px);
-    transition: backdrop-filter 0.4s ease;
-    position: relative;
-    z-index: 10;
-}
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: flex-end;
+  }
 
-header.header-blur {
-    backdrop-filter: blur(12px);
-}
+  /* Footer: height 80px, padding 10px (pencil: height 80, padding 10) */
+  .mk-footer {
+    min-height: 80px !important;
+    padding: 10px !important;
+  }
 
-/* Logo */
-.logo {
-    max-width: 120px;
-    height: auto;
-    display: block;
-    transition: filter 0.5s ease;
-    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.25));
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    cursor: pointer;
-}
+  /* ── Work page ── */
+  /* Hide desktop sidebar */
+  .mk-sidebar { display: none !important; }
 
-.logo:hover {
-    filter: brightness(0) drop-shadow(0 8px 20px rgba(0, 0, 0, 0.5));
-}
+  /* Show "ALL ITEMS" label (pencil: 16px bold white) */
+  .mk-mobile-all-items { display: block !important; }
 
-/* Header blur when logo is hovered */
-header.logo-hover-blur {
-    backdrop-filter: blur(12px);
-}
+  /* Work layout: vertical, padding 16, gap 37 (pencil: Main Content gap 37, padding 16) */
+  .mk-work-layout {
+    flex-direction: column !important;
+    padding: 16px !important;
+    gap: 37px !important;
+    align-items: center !important;
+  }
 
-/* Button */
-.cta-button {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    background-color: var(--accent);
-    color: var(--neutral);
-    text-decoration: none;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-    text-transform: capitalize;
-    transition: all 0.3s ease;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
-    cursor: pointer;
-}
+  /* Product grids: 2 columns × 160px, gap 16 (pencil: mRow gap 16, cards 160×160) */
+  .mk-product-grid {
+    grid-template-columns: repeat(2, 160px) !important;
+    justify-content: center !important;
+    gap: 16px !important;
+  }
 
-.cta-button:hover {
-    background-color: #dc2626;
-    transform: translateY(-2px);
-}
+  /* Product cards: 160×160 (pencil: Product Item 160×160) */
+  .mk-product-card {
+    width: 160px !important;
+    height: 160px !important;
+  }
 
-/* Footer */
-footer {
-    padding: 0.6rem 2rem;
-    text-align: center;
-    color: var(--neutral);
-    position: relative;
-    background: transparent;
-    backdrop-filter: blur(0px);
-    transition: backdrop-filter 0.4s ease;
-}
-
-footer.blurred {
-    backdrop-filter: blur(18px);
-    background: transparent;
-}
-
-.social-links {
-    margin: 1.5rem 0;
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-}
-
-.social-links a {
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 0.8rem;
-    letter-spacing: 0.5px;
-    transition: color 0.3s ease;
-    text-transform: lowercase;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-}
-
-.social-links a:hover {
-    color: var(--neutral);
-}
-
-footer p {
-    font-size: 0.5rem;
-    color: #9ca3af;
-    margin-top: 1rem;
-    font-family: 'JetBrains Mono', monospace;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    header {
-        padding: 1.5rem;
-    }
+  /* ── Home carousel ── */
+  /* pencil: Mobile Carousel fill_container × 500px, cornerRadius 16 */
+  .mk-home-carousel {
+    width: 100% !important;
+    max-width: calc(100vw - 32px) !important;
+    height: 500px !important;
+    border-radius: 16px !important;
+  }
 }
