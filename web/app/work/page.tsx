@@ -16,12 +16,12 @@ export default function WorkPage() {
     <div className="w-full min-h-screen flex flex-col">
       <Header />
       <div className="mk-header-spacer" aria-hidden />
-      <MainContent className="flex-1 w-full flex items-stretch justify-center pb-[42px]">
-        <div className="w-full max-w-[1438px] flex justify-around gap-[48px] p-[48px] mk-work-layout">
+      <MainContent className="flex-1 w-full flex items-center justify-center pb-[42px]">
+        <div className="w-full max-w-[1438px] h-[594px] flex justify-start gap-[48px] p-[48px] mk-work-layout">
           <SidebarFilter />
           {/* mobile only: "ALL ITEMS" label replaces sidebar */}
           <span className="mk-mobile-all-items mk-mono text-[16px] font-bold text-white">ALL ITEMS</span>
-          <div className="flex-1 flex flex-col gap-[16px]">
+          <div className="flex-1 flex flex-col items-center justify-start gap-[16px] h-[600px]">
             <div className="mk-product-grid grid grid-cols-[repeat(6,180px)] gap-[16px]">
               {items.slice(0, 6).map((item) => (
                 <div
