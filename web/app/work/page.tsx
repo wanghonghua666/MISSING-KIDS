@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { SidebarFilter } from "@/components/work/sidebar-filter"
 import { MainContent } from "@/components/layout/main-content"
+import { TransitionLink } from "@/components/layout/transition-link"
 import Image from "next/image"
 
 export default function WorkPage() {
@@ -24,7 +25,10 @@ export default function WorkPage() {
           <div className="flex-1 flex flex-col items-center justify-start gap-[16px] h-[600px]">
             <div className="mk-product-grid grid grid-cols-[repeat(6,180px)] gap-[16px]">
               {items.slice(0, 6).map((item) => (
-                <div
+                <TransitionLink
+                  href={`/work/${item.id}`}
+                  transitionMs={360}
+                  hoverGlow={false}
                   key={item.id}
                   className="group relative w-[180px] h-[180px] bg-white/5 overflow-hidden mk-product-card"
                 >
@@ -35,12 +39,15 @@ export default function WorkPage() {
                       <span className="text-[12px] font-bold text-[#ef4444]">{item.price}</span>
                     </div>
                   </div>
-                </div>
+                </TransitionLink>
               ))}
             </div>
             <div className="mk-product-grid grid grid-cols-[repeat(6,180px)] gap-[16px]">
               {items.slice(6, 12).map((item) => (
-                <div
+                <TransitionLink
+                  href={`/work/${item.id}`}
+                  transitionMs={360}
+                  hoverGlow={false}
                   key={item.id}
                   className="group relative w-[180px] h-[180px] bg-white/5 overflow-hidden mk-product-card"
                 >
@@ -51,7 +58,7 @@ export default function WorkPage() {
                       <span className="text-[12px] font-bold text-[#ef4444]">{item.price}</span>
                     </div>
                   </div>
-                </div>
+                </TransitionLink>
               ))}
             </div>
           </div>
