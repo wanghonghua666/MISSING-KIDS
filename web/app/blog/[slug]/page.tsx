@@ -1,6 +1,9 @@
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { MainContent } from "@/components/layout/main-content"
+import { sanityClient } from "@/lib/sanity.client"
+import { blogBySlugQuery } from "@/lib/sanity.queries"
+import { PortableText, PortableTextComponents } from "@portabletext/react"
 
 interface Props {
   params: {
@@ -8,17 +11,77 @@ interface Props {
   }
 }
 
-function formatSlug(slug: string) {
-  return slug
-    .replace(/-/g, " ")
-    .replace(/_/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/^\w/, (c) => c.toUpperCase())
+const components: PortableTextComponents = {
+  types: {
+    image: ({ value }) => {
+      if (!value?.asset?.url) return null
+      return (
+        <figure className="my-[16px] flex justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={value.asset.url} alt={value.alt || ""} className="max-h-[480px] rounded-[8px]" />
+        </figure>
+      )
+    },
+    youtube: ({ value }) => {
+      if (!value?.url) return null
+      return (
+        <div className="my-[16px] aspect-video w-full max-w-[720px] mx-auto">
+          <iframe
+            src={value.url}
+            className="w-full h-full rounded-[8px]"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+      )
+    },
+    soundCloud: ({ value }) => {
+      if (!value?.url) return null
+      return (
+        <div className="my-[16px] w-full max-w-[720px] mx-auto">
+          <iframe
+            width="100%"
+            height="166"
+            scrolling="no"
+            frameBorder="no"
+            allow="autoplay"
+            src={value.url}
+          />
+        </div>
+      )
+    },
+    tweet: ({ value }) => {
+      if (!value?.url) return null
+      return (
+        <div className="my-[16px] w-full max-w-[520px] mx-auto">
+          <blockquote className="twitter-tweet">
+            <a href={value.url} />
+          </blockquote>
+        </div>
+      )
+    },
+  },
 }
 
-export default function BlogPostPage({ params }: Props) {
-  const title = formatSlug(params.slug || "untitled")
+export default async function BlogPostPage({ params }: Props) {
+  const slug = params.slug
+  const data = await sanityClient.fetch(blogBySlugQuery, { slug })
+
+  if (!data) {
+    return (
+      <div className="w-full min-h-screen flex flex-col">
+        <Header />
+        <div className="mk-header-spacer" aria-hidden />
+        <MainContent className="flex-1 w-full flex items-center justify-center pb-[42px]">
+          <div className="mk-mono text-sm text-gray-300/80">这篇博客暂时还没有内容。</div>
+        </MainContent>
+        <Footer />
+      </div>
+    )
+  }
+
+  const title: string = data.title || slug
+  const publishedAt: string | null = data.publishedAt || null
 
   return (
     <div className="w-full min-h-screen flex flex-col">
@@ -30,24 +93,12 @@ export default function BlogPostPage({ params }: Props) {
             <div className="text-[11px] tracking-[0.3em] text-[#ef4444]">BLOG</div>
             <h1 className="text-[24px] md:text-[30px] font-bold leading-tight">{title}</h1>
             <div className="text-[11px] text-gray-300/80">
-              <span>发布日期：待生成</span>
-              <span className="mx-[8px] opacity-50">/</span>
-              <span>分类：待生成</span>
+              <span>发布日期：{publishedAt ? new Date(publishedAt).toLocaleDateString() : "未设置"}</span>
             </div>
           </header>
 
           <section className="space-y-[16px] text-[13px] leading-relaxed text-gray-100/90">
-            <p>这是一个博客文章模板页面，主要用于未来由自动化系统填充真实的内容与元数据。</p>
-            <p>当前仅保证版式、排版和过渡行为与站点其他页面保持一致。</p>
-          </section>
-
-          <section className="border-t border-white/10 pt-[16px] space-y-[8px] text-[12px] text-gray-300/85">
-            <p>后续自动化可以在这里插入：</p>
-            <ul className="list-disc list-inside space-y-[4px]">
-              <li>多段正文内容（markdown 转 HTML）</li>
-              <li>图片区域（居中或全宽）</li>
-              <li>引用、代码块或注释信息</li>
-            </ul>
+            {data.body ? <PortableText value={data.body} components={components} /> : <p>正文暂未填写。</p>}
           </section>
         </article>
       </MainContent>

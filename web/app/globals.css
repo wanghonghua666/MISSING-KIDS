@@ -179,9 +179,29 @@ body {
 }
 
 /* ─── Product detail hero image ─── */
+.mk-product-hero {
+  background: transparent;
+}
+
+.mk-product-hero-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mk-product-hero-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.mk-product-hero-img-wrap {
+  min-height: 240px;
+}
+
 .mk-product-hero img {
+  width: fit-content !important;
+  height: fit-content !important;
   object-fit: contain;
   max-height: 554px;
+  max-width: 400px;
   min-height: 186px;
   min-width: 148px;
   padding-top: 0;
@@ -189,6 +209,22 @@ body {
   margin-top: 0;
   margin-bottom: 0;
   overflow: visible;
+}
+
+/* 桌面端商品详情：文字放大 30%，图片区域放大一倍（仅 .mk-work-layout 内，不影响移动端） */
+@media (min-width: 769px) {
+  .mk-glass-blur-18.mk-work-layout .mk-product-detail-content {
+    font-size: 130%;
+  }
+  .mk-glass-blur-18.mk-work-layout .mk-product-hero-img-wrap {
+    min-height: 480px;
+  }
+  .mk-glass-blur-18.mk-work-layout .mk-product-hero img {
+    max-width: 800px;
+    max-height: 1108px;
+    min-width: 296px;
+    min-height: 372px;
+  }
 }
 
 /* ─── Product cards hover (only image亮，不影响文字) ─── */
