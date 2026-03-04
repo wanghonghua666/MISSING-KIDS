@@ -71,7 +71,6 @@ export default async function BlogPostPage({ params }: Props) {
     return (
       <div className="w-full min-h-screen flex flex-col">
         <Header />
-        <div className="mk-header-spacer" aria-hidden />
         <MainContent className="flex-1 w-full flex items-center justify-center pb-[42px]">
           <div className="mk-mono text-sm text-gray-300/80">这篇博客暂时还没有内容。</div>
         </MainContent>
@@ -86,7 +85,6 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <div className="w-full min-h-screen flex flex-col">
       <Header />
-      <div className="mk-header-spacer" aria-hidden />
       <MainContent className="flex-1 w-full flex items-center justify-center pb-[42px]">
         <article className="w-full max-w-[840px] px-[24px] md:px-[40px] py-[32px] md:py-[40px] mk-glass-blur-18 mk-mono space-y-[24px]">
           <header className="space-y-[8px]">

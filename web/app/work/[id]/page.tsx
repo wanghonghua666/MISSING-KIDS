@@ -35,8 +35,7 @@ export default async function WorkDetailPage({ params }: Props) {
     return (
       <div className="w-full min-h-screen flex flex-col">
         <Header />
-        <div className="mk-header-spacer" aria-hidden />
-        <MainContent className="flex-1 w-full flex items-start justify-center gap-0 pt-[180px] pb-[90px] pl-[40px] pr-[40px] mt-[90px] mb-[90px]">
+        <MainContent className="flex-1 w-full flex items-center justify-center gap-0 pt-[180px] pb-[90px] pl-[120px] pr-[120px] mt-[90px] mb-[90px]">
           <div className="mk-mono text-sm text-gray-300/80">这个商品还没有在 Sanity 中配置。</div>
         </MainContent>
         <Footer />
@@ -50,22 +49,27 @@ export default async function WorkDetailPage({ params }: Props) {
   return (
     <div className="w-full min-h-screen flex flex-col">
       <Header />
-      <div className="mk-header-spacer" aria-hidden />
-      <MainContent className="flex-1 w-full flex items-start justify-center gap-0 pt-[180px] pb-[90px] pl-[40px] pr-[40px] mt-[90px] mb-[90px]">
-        <div className="w-full max-w-[960px] md:max-w-[1280px] flex flex-col md:flex-row gap-[40px] p-[32px] md:p-[48px] mk-glass-blur-18 mk-work-layout">
-          <div className="w-full md:w-[1000px] h-fit rounded-xl overflow-y-auto overflow-x-hidden flex flex-col items-center mk-product-hero mk-product-hero-scroll">
+      <MainContent className="flex-1 w-full flex items-center justify-center gap-0 pt-[180px] pb-[90px] pl-[120px] pr-[120px] mt-[90px] mb-[90px]">
+        <div className="w-full max-w-[960px] md:max-w-[1280px] flex flex-col md:flex-row items-center justify-start gap-[40px] p-[32px] md:p-[48px] mk-glass-blur-18 mk-work-layout text-left [transform:rotate(360deg)]">
+          <div className="w-fit h-fit rounded-xl overflow-y-auto overflow-x-hidden flex flex-col items-center gap-0 px-[60px] mx-0 mk-product-hero mk-product-hero-scroll">
             <div className="flex flex-col items-center gap-[24px] py-[24px] shrink-0">
-              <div className="relative w-[500px] md:w-[700px] shrink-0 mk-product-hero-img-wrap">
-                <Image src={product.image?.asset?.url || "/logo.png"} alt={title} fill sizes="(min-width: 769px) 1000px, 500px" className="object-contain" />
+              <div className="relative w-[786px] h-[588px] md:w-[786px] md:h-[588px] shrink-0 mk-product-hero-img-wrap flex flex-wrap">
+                <Image
+                  src={product.image?.asset?.url || "/logo.png"}
+                  alt={title}
+                  fill
+                  sizes="(min-width: 769px) 1000px, 500px"
+                  className="object-cover"
+                />
               </div>
               {/* 可在此追加更多图片，会在此框内垂直滚动 */}
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col justify-center items-start gap-[24px] mk-mono mk-product-detail-content">
+          <div className="flex-1 flex flex-col justify-center items-start gap-[24px] px-[90px] mk-mono mk-product-detail-content font-semibold leading-[31px]">
             <div className="flex flex-col gap-[8px]">
               <span className="text-[12px] tracking-[0.3em] text-[#ef4444]">PRODUCT DETAIL</span>
-              <h1 className="text-[24px] md:text-[28px] font-bold leading-tight">{title}</h1>
+              <h1 className="text-[24px] md:text-[56px] font-bold leading-tight">{title}</h1>
             </div>
 
             <div className="text-[18px] font-bold text-[#ef4444]">{price}</div>

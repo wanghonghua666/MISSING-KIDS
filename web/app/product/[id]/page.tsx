@@ -7,7 +7,6 @@ export default function ProductPage({ params }: { params: { id: string } }) {
   return (
     <div className="w-full min-h-screen flex flex-col">
       <Header />
-      <div className="mk-header-spacer" aria-hidden />
       <main className="flex-1 w-full flex items-stretch justify-center">
         <div className="w-full max-w-[1440px] flex justify-between gap-[64px] p-[64px]">
           <div className="w-[713px] h-[696px] rounded-[16px] bg-black/20 flex items-center justify-center">

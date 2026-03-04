@@ -13,7 +13,6 @@ export default async function WorkPage() {
   return (
     <div className="w-full min-h-screen flex flex-col">
       <Header />
-      <div className="mk-header-spacer" aria-hidden />
       <MainContent className="flex-1 w-full flex items-center justify-center pb-[42px]">
         <WorkPageContent products={products} categories={categories} />
       </MainContent>
