@@ -10,8 +10,14 @@ type Props = {
 
 export function BlogCarousel({ posts }: Props) {
   const [active, setActive] = React.useState(0)
+  /** 每张图 decode 完再淡入，避免黑底上「瞬间弹出」 */
+  const [imageReadyById, setImageReadyById] = React.useState<Record<string, boolean>>({})
 
   const count = posts.length
+
+  const markImageReady = React.useCallback((id: string) => {
+    setImageReadyById((prev) => (prev[id] ? prev : { ...prev, [id]: true }))
+  }, [])
 
   return (
     <section className="w-full mk-mono">
@@ -32,6 +38,7 @@ export function BlogCarousel({ posts }: Props) {
             {posts.map((p, slideIndex) => {
               const img = p.previewImageUrl
               const isFirstLcp = slideIndex === 0
+              const imageReady = imageReadyById[p._id] === true
               return (
                 <div key={p._id} className="w-full shrink-0 bg-black">
                   {img ? (
@@ -44,12 +51,16 @@ export function BlogCarousel({ posts }: Props) {
                       <img
                         src={img}
                         alt={p.imageAlt || p.title || ""}
-                        className="block h-auto max-w-none"
+                        className={`block h-auto max-w-none transition-opacity duration-300 ease-out ${
+                          imageReady ? "opacity-100" : "opacity-0"
+                        }`}
                         width={1600}
                         decoding="async"
                         loading={isFirstLcp ? "eager" : "lazy"}
                         fetchPriority={isFirstLcp ? "high" : "low"}
                         sizes="(max-width: 1600px) 100vw, 1600px"
+                        onLoad={() => markImageReady(p._id)}
+                        onError={() => markImageReady(p._id)}
                         style={{
                           width: "calc(100% + 2px)",
                           marginLeft: "-1px",
