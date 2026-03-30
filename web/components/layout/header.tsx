@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import { TransitionLink } from "@/components/layout/transition-link"
 
 export function Header() {
@@ -10,8 +9,17 @@ export function Header() {
   return (
     <>
       <header className="mk-header">
-        <TransitionLink href="/home" className="mk-logo-link flex items-center justify-center">
-          <Image src="/logo.png" alt="MissingKids Lab" width={120} height={120} priority className="select-none" />
+        <TransitionLink href="/home" className="mk-logo-link flex items-center">
+          {/* Logo 来自 web/public/logo.png；改图请替换该文件。?v= 用于避开浏览器强缓存旧图 */}
+          <img
+            src="/logo.png?v=4"
+            alt="MissingKids Lab"
+            width={120}
+            height={120}
+            decoding="async"
+            fetchPriority="high"
+            className="mk-logo-img select-none"
+          />
         </TransitionLink>
 
         {/* Desktop nav — hidden on mobile via CSS */}

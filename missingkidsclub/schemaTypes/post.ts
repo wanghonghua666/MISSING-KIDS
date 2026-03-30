@@ -51,6 +51,7 @@ export default defineType({
         {type: 'youtube'},
         {type: 'soundCloud'},
         {type: 'tweet'},
+        {type: 'inspost'},
       ],
     }),
   ],

@@ -1,15 +1,18 @@
 @import "tailwindcss";
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
+/* 必须放在 @layer base，否则未分层的 * 会盖过 Tailwind 的 padding/margin 工具类 */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 
-*::-webkit-scrollbar {
-  display: none;
+  *::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 :root {
@@ -67,12 +70,31 @@ body {
   background: transparent;
 }
 
+/* 宽度随图片收缩、左对齐，避免固定宽 + 居中在图左侧留出白条（透底像白边） */
 .mk-logo-link {
-  width: 170px;
+  width: auto;
+  max-width: 170px;
   height: 98px;
   display: flex;
   align-items: center;
-  justify-content: center !important;
+  justify-content: flex-start;
+  flex: 0 0 auto;
+  overflow: visible;
+  text-decoration: none;
+  background: transparent;
+}
+
+.mk-logo-link .mk-logo-img,
+.mk-logo-img {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  height: auto;
+  width: 120px;
+  max-width: 120px;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .mk-desktop-nav {
@@ -305,8 +327,10 @@ body {
     width: 90px !important;
     height: 41px !important;
   }
+  .mk-logo-link .mk-logo-img,
   .mk-logo-link img {
     width: 80px !important;
+    max-width: 80px !important;
     height: auto !important;
   }
 

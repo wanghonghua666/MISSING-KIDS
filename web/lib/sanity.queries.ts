@@ -4,14 +4,7 @@ export const blogBySlugQuery = `
   title,
   slug,
   publishedAt,
-  body,
-  "mainImage": mainImage{
-    asset->{
-      _id,
-      url
-    },
-    alt
-  }
+  body
 }
 `
 
