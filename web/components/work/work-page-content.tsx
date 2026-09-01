@@ -39,20 +39,20 @@ export function WorkPageContent({products, categories, initialCategory = "ALL"}:
         {visible.length === 0 ? (
           <div className="mk-mono text-sm text-white/60 py-[80px]">这个分类暂时没有商品。</div>
         ) : (
-          <div className="mk-product-grid grid grid-cols-[repeat(6,180px)] gap-[16px]">
+          <div className="mk-product-grid grid grid-cols-[repeat(3,219.2px)] min-[1440px]:grid-cols-[repeat(5,219.2px)] gap-[16px]">
             {visible.map((item) => (
               <TransitionLink
                 href={`/work/${item.slug}`}
                 transitionMs={360}
                 hoverGlow={false}
                 key={item._id}
-                className="group relative w-[180px] h-[180px] overflow-hidden mk-product-card"
+                className="group relative w-[219.2px] h-[219.2px] overflow-hidden mk-product-card"
               >
                 <Image
                   src={item.imageUrl}
                   alt={item.imageAlt}
                   fill
-                  sizes="180px"
+                  sizes="(max-width: 768px) 160px, 220px"
                   className="object-contain"
                 />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
