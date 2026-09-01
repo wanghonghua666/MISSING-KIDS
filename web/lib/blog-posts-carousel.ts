@@ -4,9 +4,10 @@ import type { BlogCarouselPost } from "@/lib/types/blog-carousel-post"
 import type { SanityImageSource } from "@sanity/image-url"
 
 const query = `
-*[_type == "post" && defined(slug.current)] | order(publishedAt desc){
+*[_type == "post" && defined(slug.current)] | order(orderRank){
   _id,
   title,
+  orderRank,
   "slug": slug.current,
   publishedAt,
   "mainImage": mainImage{

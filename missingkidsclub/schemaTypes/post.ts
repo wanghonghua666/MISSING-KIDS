@@ -1,5 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
 import {DocumentTextIcon} from '@sanity/icons'
+import {orderRankField, orderRankOrdering} from '@sanity/orderable-document-list'
 import InstagramMainImageInput from '../components/inputs/instagramMainImageInput'
 
 export default defineType({
@@ -7,7 +8,9 @@ export default defineType({
   title: 'Blog Post',
   type: 'document',
   icon: DocumentTextIcon,
+  orderings: [orderRankOrdering],
   fields: [
+    orderRankField({type: 'post'}),
     defineField({
       name: 'title',
       title: 'Title',
