@@ -1,39 +1,86 @@
-export const blogBySlugQuery = `
+import {defineQuery} from "next-sanity"
+
+export const sanityImageProjection = `{
+  crop,
+  hotspot,
+  alt,
+  asset
+}`
+
+export const siteSettingsQuery = defineQuery(`
+*[_id == "siteSettings"][0]{
+  siteTitle,
+  siteDescription,
+  instagramUrl,
+  productCtaLabel,
+  copyright,
+  footerNav[]{
+    _key,
+    label,
+    url
+  }
+}
+`)
+
+export const blogBySlugQuery = defineQuery(`
 *[_type == "post" && slug.current == $slug][0]{
   _id,
   title,
-  slug,
+  "slug": slug.current,
   publishedAt,
-  body
+  body,
+  mainImage${sanityImageProjection}
 }
-`
+`)
 
-export const allProductsWithCategoryQuery = `
+export const allProductsWithCategoryQuery = defineQuery(`
 *[_type == "product" && defined(slug.current)] | order(orderRank asc){
   _id,
   title,
   "slug": slug.current,
-  "image": mainImage{
-    asset->{
-      _id,
-      url
-    },
-    alt
-  },
   price,
+  mainImage${sanityImageProjection},
   "category": category->{
     _id,
     title,
     "slug": slug.current
   }
 }
-`
+`)
 
-export const allCategoriesQuery = `
+export const allCategoriesQuery = defineQuery(`
 *[_type == "category"] | order(orderRank asc){
   _id,
   title,
   "slug": slug.current
 }
-`
+`)
 
+export const productBySlugQuery = defineQuery(`
+*[_type == "product" && slug.current == $slug][0]{
+  _id,
+  title,
+  "slug": slug.current,
+  price,
+  description,
+  size,
+  color,
+  ctaLabel,
+  ctaUrl,
+  mainImage${sanityImageProjection},
+  "gallery": gallery[]{
+    _key,
+    crop,
+    hotspot,
+    alt,
+    asset
+  }
+}
+`)
+
+export const sitemapEntriesQuery = defineQuery(`
+{
+  "posts": *[_type == "post" && defined(slug.current)]{"slug": slug.current, publishedAt, _updatedAt},
+  "products": *[_type == "product" && defined(slug.current)]{"slug": slug.current, _updatedAt}
+}
+`)

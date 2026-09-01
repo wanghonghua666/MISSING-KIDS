@@ -1,19 +1,22 @@
 "use client"
 
 import * as React from "react"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { MainContent } from "@/components/layout/main-content"
-import { BlogCarousel } from "@/components/blog/blog-carousel"
-import type { BlogCarouselPost } from "@/lib/types/blog-carousel-post"
+import {Header} from "@/components/layout/header"
+import {Footer} from "@/components/layout/footer"
+import {MainContent} from "@/components/layout/main-content"
+import {BlogCarousel} from "@/components/blog/blog-carousel"
+import type {BlogCarouselPost} from "@/lib/types/blog-carousel-post"
+import type {FooterNavItem} from "@/lib/site-settings"
 
 type Mode = "fromStart" | "normal"
 
 type Props = {
   carouselPosts: BlogCarouselPost[]
+  footerNav?: FooterNavItem[]
+  copyright?: string | null
 }
 
-export function HomeClient({ carouselPosts }: Props) {
+export function HomeClient({carouselPosts, footerNav, copyright}: Props) {
   const [mode, setMode] = React.useState<Mode>(() => {
     if (typeof window === "undefined") return "normal"
     return sessionStorage.getItem("fromStart") === "1" ? "fromStart" : "normal"
@@ -29,8 +32,8 @@ export function HomeClient({ carouselPosts }: Props) {
   }, [])
 
   const carousel = (
-    <div className="mk-home-carousel relative w-[1573px] max-w-none my-[118px] rounded-none bg-black/30 flex flex-col items-center justify-center text-left">
-      <div className="w-full">
+    <div className="mk-home-carousel relative mx-auto w-[964px] max-w-full my-[36px] md:my-[48px] overflow-hidden rounded-none bg-black/30 flex flex-col items-center justify-center text-left">
+      <div className="h-full w-full">
         <BlogCarousel posts={carouselPosts} />
       </div>
     </div>
@@ -43,7 +46,7 @@ export function HomeClient({ carouselPosts }: Props) {
         <main className="flex-1 w-full flex flex-col items-center justify-center gap-[48px] py-[48px] mk-from-start-main">
           {carousel}
         </main>
-        <Footer />
+        <Footer nav={footerNav} copyright={copyright} />
       </div>
     )
   }
@@ -54,7 +57,7 @@ export function HomeClient({ carouselPosts }: Props) {
       <MainContent className="flex-1 h-fit w-full flex flex-col items-center justify-center gap-0 mx-0 px-0 pt-0 pb-0 my-[23px]">
         {carousel}
       </MainContent>
-      <Footer />
+      <Footer nav={footerNav} copyright={copyright} />
     </div>
   )
 }

@@ -1,9 +1,11 @@
 import {defineField, defineType} from 'sanity'
+import {CommentIcon} from '@sanity/icons'
 
 export default defineType({
   name: 'tweet',
-  title: 'Tweet embed',
+  title: 'Tweet',
   type: 'object',
+  icon: CommentIcon,
   fields: [
     defineField({
       name: 'url',

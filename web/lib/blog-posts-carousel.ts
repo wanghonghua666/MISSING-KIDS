@@ -33,9 +33,17 @@ type Row = {
   bodyFirstImage?: SanityImageSource | null
 }
 
-/** 首页轮播可视宽度约 1573px，1600@q80 足够清晰且明显小于原 2000@85 */
-const CAROUSEL_IMAGE_WIDTH = 1600
+/** 首页轮播：宽 964，高 978（1278−300）。只按宽度出图，左右不裁，上下由容器裁 */
+const CAROUSEL_IMAGE_WIDTH = 1928
 const CAROUSEL_IMAGE_QUALITY = 80
+
+function carouselPreviewUrl(image: SanityImageSource | null | undefined) {
+  return sanityImageUrl(image, {
+    width: CAROUSEL_IMAGE_WIDTH,
+    quality: CAROUSEL_IMAGE_QUALITY,
+    fit: "max",
+  })
+}
 
 export async function getBlogPostsForCarousel(): Promise<BlogCarouselPost[]> {
   const raw = (await sanityClient.fetch(query)) as Row[]
@@ -49,13 +57,7 @@ export async function getBlogPostsForCarousel(): Promise<BlogCarouselPost[]> {
       title: p.title,
       slug: p.slug,
       publishedAt: p.publishedAt,
-      previewImageUrl:
-        sanityImageUrl(p.mainImage, { width: CAROUSEL_IMAGE_WIDTH, quality: CAROUSEL_IMAGE_QUALITY }) ??
-        sanityImageUrl(p.bodyFirstImage, {
-          width: CAROUSEL_IMAGE_WIDTH,
-          quality: CAROUSEL_IMAGE_QUALITY,
-        }) ??
-        null,
+      previewImageUrl: carouselPreviewUrl(p.mainImage) ?? carouselPreviewUrl(p.bodyFirstImage),
       imageAlt: mainAlt || p.title || "",
     }
   })

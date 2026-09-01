@@ -2,26 +2,22 @@
 
 import * as React from "react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import {useRouter} from "next/navigation"
 
 export default function StartPage() {
   const router = useRouter()
   const [leaving, setLeaving] = React.useState(false)
   const [hovered, setHovered] = React.useState(false)
 
-  function handleClick() {
-    // 1. 先关 hover — 让 blur 开始渐出（不受 opacity 父级 stacking context 影响）
+  function enterSite() {
     setHovered(false)
     sessionStorage.setItem("fromStart", "1")
-    // 2. 稍后再触发整页淡出
     window.setTimeout(() => setLeaving(true), 80)
-    // 3. 淡出结束后导航
     window.setTimeout(() => router.push("/home"), 400)
   }
 
   return (
     <>
-      {/* 背景 blur 层：position:fixed，独立于页面 opacity，避免 stacking context 吞掉 backdrop-filter */}
       <div
         style={{
           position: "fixed",
@@ -35,7 +31,6 @@ export default function StartPage() {
         }}
       />
 
-      {/* 页面内容 */}
       <div
         className="relative w-full min-h-screen flex items-center justify-center"
         style={{
@@ -44,11 +39,13 @@ export default function StartPage() {
           zIndex: 1,
         }}
       >
-        <div
-          className="relative cursor-pointer"
-          onClick={handleClick}
+        <button
+          type="button"
+          className="relative cursor-pointer bg-transparent border-0 p-0"
+          onClick={enterSite}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
+          aria-label="进入 MissingKids Lab"
         >
           <Image
             src="/logo.png"
@@ -64,7 +61,7 @@ export default function StartPage() {
                 : "none",
             }}
           />
-        </div>
+        </button>
       </div>
     </>
   )

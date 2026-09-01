@@ -1,9 +1,11 @@
 import {defineField, defineType} from 'sanity'
+import {BoltIcon} from '@sanity/icons'
 
 export default defineType({
   name: 'soundCloud',
-  title: 'SoundCloud embed',
+  title: 'SoundCloud',
   type: 'object',
+  icon: BoltIcon,
   fields: [
     defineField({
       name: 'url',

@@ -1,99 +1,126 @@
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { MainContent } from "@/components/layout/main-content"
-import { TransitionLink } from "@/components/layout/transition-link"
-import { sanityClient } from "@/lib/sanity.client"
+import type {Metadata} from "next"
 import Image from "next/image"
+import {notFound} from "next/navigation"
+import {Header} from "@/components/layout/header"
+import {Footer} from "@/components/layout/footer"
+import {MainContent} from "@/components/layout/main-content"
+import {TransitionLink} from "@/components/layout/transition-link"
+import {sanityClient} from "@/lib/sanity.client"
+import {productBySlugQuery} from "@/lib/sanity.queries"
+import {sanityImageUrl} from "@/lib/sanity.image"
+import {formatPrice} from "@/lib/price"
+import {getSiteSettings} from "@/lib/site-settings"
+
+export const revalidate = 60
 
 interface Props {
-  params: Promise<{ id: string }>
+  params: Promise<{id: string}>
 }
 
-const productBySlugQuery = `
-*[_type == "product" && slug.current == $slug][0]{
-  _id,
-  title,
-  "slug": slug.current,
-  "image": mainImage{
-    asset->{
-      _id,
-      url
+export async function generateMetadata({params}: Props): Promise<Metadata> {
+  const {id} = await params
+  const product = await sanityClient.fetch(productBySlugQuery, {slug: id})
+  if (!product) return {title: "Not found"}
+  return {
+    title: product.title,
+    description: product.description || undefined,
+    openGraph: {
+      images: sanityImageUrl(product.mainImage, {width: 1200, quality: 80})
+        ? [{url: sanityImageUrl(product.mainImage, {width: 1200, quality: 80}) as string}]
+        : undefined,
     },
-    alt
-  },
-  price,
-  description
-}
-`
-
-export default async function WorkDetailPage({ params }: Props) {
-  const { id } = await params
-  const slug = id
-  const product = await sanityClient.fetch(productBySlugQuery, { slug })
-
-  if (!product) {
-    return (
-      <div className="w-full min-h-screen flex flex-col">
-        <Header />
-        <MainContent className="flex-1 w-full flex items-center justify-center gap-0 pt-[180px] pb-[90px] pl-[120px] pr-[120px] mt-[90px] mb-[90px]">
-          <div className="mk-mono text-sm text-gray-300/80">这个商品还没有在 Sanity 中配置。</div>
-        </MainContent>
-        <Footer />
-      </div>
-    )
   }
+}
 
-  const title: string = product.title
-  const price: string = product.price ?? "¥0"
+export default async function WorkDetailPage({params}: Props) {
+  const {id} = await params
+  const [product, settings] = await Promise.all([
+    sanityClient.fetch(productBySlugQuery, {slug: id}),
+    getSiteSettings(),
+  ])
+
+  if (!product) notFound()
+
+  const images = [
+    product.mainImage
+      ? {
+          url: sanityImageUrl(product.mainImage, {width: 1600, quality: 85}) || "/logo.png",
+          alt: product.mainImage.alt || product.title,
+        }
+      : null,
+    ...(product.gallery ?? []).map((image: {alt?: string | null}) => {
+      const url = sanityImageUrl(image, {width: 1600, quality: 85})
+      if (!url) return null
+      return {url, alt: image.alt || product.title}
+    }),
+  ].filter((image): image is {url: string; alt: string} => Boolean(image))
+
+  const price = formatPrice(product.price)
+  const ctaHref = product.ctaUrl || settings.instagramUrl
+  const ctaLabel = product.ctaLabel || settings.productCtaLabel
 
   return (
     <div className="w-full min-h-screen flex flex-col">
       <Header />
       <MainContent className="flex-1 w-full flex items-center justify-center gap-0 pt-[180px] pb-[90px] pl-[120px] pr-[120px] mt-[90px] mb-[90px]">
-        <div className="w-full max-w-[960px] md:max-w-[1280px] flex flex-col md:flex-row items-center justify-start gap-[40px] p-[32px] md:p-[48px] mk-glass-blur-18 mk-work-layout text-left [transform:rotate(360deg)]">
-          <div className="w-fit h-fit rounded-xl overflow-y-auto overflow-x-hidden flex flex-col items-center gap-0 px-[60px] mx-0 mk-product-hero mk-product-hero-scroll">
-            <div className="flex flex-col items-center gap-[24px] py-[24px] shrink-0">
-              <div className="relative w-[786px] h-[588px] md:w-[786px] md:h-[588px] shrink-0 mk-product-hero-img-wrap flex flex-wrap">
-                <Image
-                  src={product.image?.asset?.url || "/logo.png"}
-                  alt={title}
-                  fill
-                  sizes="(min-width: 769px) 1000px, 500px"
-                  className="object-cover"
-                />
-              </div>
-              {/* 可在此追加更多图片，会在此框内垂直滚动 */}
+        <div className="w-full max-w-[960px] md:max-w-[1280px] flex flex-col md:flex-row items-center justify-start gap-[40px] p-[32px] md:p-[48px] mk-glass-blur-18 mk-work-layout text-left">
+          <div className="min-w-0 w-full max-w-[786px] h-fit rounded-xl overflow-visible flex flex-col items-center gap-0 px-0 mx-0 mk-product-hero mk-product-hero-scroll">
+            <div className="flex w-full flex-col items-center gap-[24px] py-[24px]">
+              {images.map((image) => (
+                <div
+                  key={image.url}
+                  className="relative w-full aspect-[1017/767] max-h-[70vh] mk-product-hero-img-wrap"
+                >
+                  <Image
+                    src={image.url}
+                    alt={image.alt}
+                    fill
+                    sizes="(min-width: 769px) 786px, 100vw"
+                    className="object-contain"
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col justify-center items-start gap-[24px] px-[90px] mk-mono mk-product-detail-content font-semibold leading-[31px]">
-            <div className="flex flex-col gap-[8px]">
+          <div className="min-w-0 flex-1 flex flex-col justify-center items-start gap-[24px] px-[24px] md:px-[48px] mk-mono mk-product-detail-content font-semibold leading-[31px]">
+            <div className="flex w-full flex-col gap-[8px]">
               <span className="text-[12px] tracking-[0.3em] text-[#ef4444]">PRODUCT DETAIL</span>
-              <h1 className="text-[24px] md:text-[56px] font-bold leading-tight">{title}</h1>
+              <h1 className="w-full text-right text-[48px] md:text-[112px] font-bold leading-[0.625]">
+                {product.title}
+              </h1>
             </div>
 
-            <div className="text-[18px] font-bold text-[#ef4444]">{price}</div>
+            {price ? <div className="text-[18px] font-bold text-[#ef4444]">{price}</div> : null}
 
-            <div className="text-[13px] leading-relaxed text-[rgba(99,99,99,0.9)] space-y-[8px]">
-              {product.description ? (
-                <p>{product.description}</p>
-              ) : (
-                <>
-                  <p>这是一个占位商品介绍页面，用于未来自动生成真实的商品文案与图片。</p>
-                  <p>当前版本只展示基本信息和版式，保持与现有站点视觉语言一致。</p>
-                </>
-              )}
-            </div>
+            {product.description ? (
+              <div className="text-[13px] leading-relaxed text-[rgba(99,99,99,0.9)] whitespace-pre-wrap">
+                {product.description}
+              </div>
+            ) : null}
 
-            <div className="mt-[16px] flex flex-wrap gap-[12px] text-[12px] text-[rgba(41,41,41,0.9)]">
-              <span className="px-[10px] py-[4px] rounded-full">Size: ONE SIZE</span>
-              <span className="px-[10px] py-[4px] rounded-full">Color: DEFAULT</span>
-            </div>
+            {product.size || product.color ? (
+              <div className="mt-[16px] flex flex-wrap gap-[12px] text-[12px] text-[rgba(41,41,41,0.9)]">
+                {product.size ? (
+                  <span className="px-[10px] py-[4px] rounded-full">Size: {product.size}</span>
+                ) : null}
+                {product.color ? (
+                  <span className="px-[10px] py-[4px] rounded-full">Color: {product.color}</span>
+                ) : null}
+              </div>
+            ) : null}
 
             <div className="mt-auto flex gap-[16px] text-[12px]">
-              <button className="px-[16px] py-[8px] text-[#ef4444] mk-hover-bright">
-                以后在这里下单
-              </button>
+              {ctaHref ? (
+                <a
+                  href={ctaHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-[16px] py-[8px] text-[#ef4444] mk-hover-bright"
+                >
+                  {ctaLabel}
+                </a>
+              ) : null}
               <TransitionLink
                 href="/work"
                 transitionMs={360}
@@ -105,8 +132,7 @@ export default async function WorkDetailPage({ params }: Props) {
           </div>
         </div>
       </MainContent>
-      <Footer />
+      <Footer nav={settings.footerNav} copyright={settings.copyright} />
     </div>
   )
 }
-
