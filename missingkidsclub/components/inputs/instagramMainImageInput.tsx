@@ -1,7 +1,8 @@
 import * as React from "react"
 import {ImageInputProps, set, useClient, useFormValue} from "sanity"
+import {studioSiteUrl} from "../../lib/siteUrl"
 
-const SITE_URL = process.env.SANITY_STUDIO_SITE_URL || "http://localhost:3001"
+const SITE_URL = studioSiteUrl()
 
 type BodyBlock = {
   _type?: string
@@ -79,7 +80,12 @@ export default function InstagramMainImageInput(props: ImageInputProps) {
     } catch (err) {
       const message = err instanceof Error ? err.message : "抓取失败"
       if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
-        setError(`无法连接 ${SITE_URL}。请先启动网站（web）开发服务后再试。`)
+        const remote = typeof window !== "undefined" && window.location.hostname !== "localhost"
+        setError(
+          remote
+            ? `无法连接 ${SITE_URL}。线上后台需要网站已部署，并允许此 Studio 域名跨域访问。`
+            : `无法连接 ${SITE_URL}。请先启动网站（web）开发服务后再试。`,
+        )
       } else {
         setError(message)
       }

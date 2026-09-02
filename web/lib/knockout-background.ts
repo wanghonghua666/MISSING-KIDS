@@ -116,7 +116,7 @@ function detectMode(data: Buffer, w: number, h: number): Mode | null {
     if (c <= MAX_CHROMA && yv >= WHITE_LUMA - 8) white++
   }
   const mode: Mode | null =
-    black >= 5 && black > white ? "black" : white >= 5 && white > black ? "white" : null
+    black >= 6 && black > white ? "black" : white >= 6 && white > black ? "white" : null
   if (!mode) return null
   if (!centerHasSubject(data, w, h, mode)) return null
   return mode

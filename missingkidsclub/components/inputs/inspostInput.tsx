@@ -1,8 +1,9 @@
 import * as React from 'react'
 import {PatchEvent, set} from 'sanity'
 import {resolveEmbed} from '../../lib/embedUrl'
+import {studioSiteUrl} from '../../lib/siteUrl'
 
-const SITE_URL = process.env.SANITY_STUDIO_SITE_URL || 'http://localhost:3001'
+const SITE_URL = studioSiteUrl()
 
 function InstagramPreview({permalink, title}: {permalink: string; title?: string}) {
   const [failed, setFailed] = React.useState(false)

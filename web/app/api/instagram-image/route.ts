@@ -1,18 +1,11 @@
+import {isAllowedStudioOrigin} from "@/lib/studio-cors"
 import {fetchInstagramFirstImage, InstagramImageError} from "@/lib/instagram-first-image"
 import {NextResponse} from "next/server"
 
 export const dynamic = "force-dynamic"
 
 function isAllowedOrigin(origin: string) {
-  try {
-    const url = new URL(origin)
-    if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
-      return url.port === "3333" || url.port === "3000" || url.port === "3001"
-    }
-    return url.hostname === "sanity.studio" || url.hostname.endsWith(".sanity.studio")
-  } catch {
-    return false
-  }
+  return isAllowedStudioOrigin(origin)
 }
 
 function corsHeaders(request: Request) {
