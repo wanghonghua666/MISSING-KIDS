@@ -21,6 +21,7 @@
   --mk-muted: #9ca3af;
   --mk-header-height: 111px;
   --mk-header-pad-x: 13px;
+  --mk-footer-height: 42px;
 }
 
 html {
@@ -362,6 +363,27 @@ body::before {
   animation: mkFadeIn 700ms ease 850ms both;
 }
 
+/* 首页舞台：在固定头尾之间把预览水平+垂直居中 */
+.mk-home-stage {
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding-top: var(--mk-header-height);
+  padding-bottom: var(--mk-footer-height);
+}
+
+.mk-blog {
+  width: min(964px, 100%);
+  margin-inline: auto;
+}
+
+.mk-blog.mk-blog-pair {
+  width: min(1960px, 100%);
+}
+
+.mk-carousel-pair .mk-carousel-slide {
+  height: auto;
+}
+
 @keyframes mkFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* ─── Mobile only helpers (hidden on desktop) ─── */
@@ -372,6 +394,7 @@ body::before {
   :root {
     --mk-header-height: 60px;
     --mk-header-pad-x: 16px;
+    --mk-footer-height: 80px;
   }
 
   /* Spacer matches header height on mobile */
@@ -465,9 +488,40 @@ body::before {
 
   /* ── Home carousel ── */
   .mk-home-carousel {
-    width: min(964px, calc(100vw - 32px)) !important;
-    max-width: calc(100vw - 32px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
     height: auto !important;
-    border-radius: 16px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    box-sizing: border-box !important;
+    border-radius: 0 !important;
+  }
+
+  .mk-home-carousel > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+
+  .mk-carousel-slide {
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  .mk-carousel-slide img {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    object-fit: contain;
+    object-position: center center;
   }
 }

@@ -1,16 +1,32 @@
 "use client"
 
 import * as React from "react"
-import { TransitionLink } from "@/components/layout/transition-link"
-import type { BlogCarouselPost } from "@/lib/types/blog-carousel-post"
+import {TransitionLink} from "@/components/layout/transition-link"
+import type {BlogCarouselPost} from "@/lib/types/blog-carousel-post"
 
 type Props = {
   posts: BlogCarouselPost[]
 }
 
-export function BlogCarousel({ posts }: Props) {
+/** 两张 964 预览 + 32 间距；1920 起略缩也能并排 */
+const PAIR_MIN_WIDTH = 1920
+
+function usePrefersPair() {
+  return React.useSyncExternalStore(
+    (onStoreChange) => {
+      const mq = window.matchMedia(`(min-width: ${PAIR_MIN_WIDTH}px)`)
+      mq.addEventListener("change", onStoreChange)
+      return () => mq.removeEventListener("change", onStoreChange)
+    },
+    () => window.matchMedia(`(min-width: ${PAIR_MIN_WIDTH}px)`).matches,
+    () => false,
+  )
+}
+
+export function BlogCarousel({posts}: Props) {
   const [active, setActive] = React.useState(0)
   const count = posts.length
+  const pair = usePrefersPair() && count >= 2
 
   const goPrev = React.useCallback(() => {
     if (count < 2) return
@@ -22,12 +38,24 @@ export function BlogCarousel({ posts }: Props) {
     setActive((i) => (i + 1) % count)
   }, [count])
 
+  const left = posts[active]
+  const right = posts[(active + 1) % count]
+
   return (
-    <section className="w-full mk-blog">
-      <div className="relative w-full overflow-hidden rounded-none bg-black">
+    <section className={`w-full mk-blog ${pair ? "mk-blog-pair" : ""}`}>
+      <div className={`relative w-full ${pair ? "" : "overflow-hidden rounded-none bg-black"}`}>
         {count === 0 ? (
-          <div className="flex h-[978px] w-full items-center justify-center text-[12px] text-white/60">
+          <div className="flex aspect-[964/978] w-full items-center justify-center text-[12px] text-white/60">
             暂无博客内容
+          </div>
+        ) : pair && left && right ? (
+          <div className="mk-carousel-pair flex w-full items-center justify-center gap-[32px]">
+            <div className="mk-carousel-frame min-w-0 w-[min(964px,calc((100%-32px)/2))]">
+              <CarouselSlide post={left} isActive navMode="prev" onPrev={goPrev} onNext={goNext} />
+            </div>
+            <div className="mk-carousel-frame min-w-0 w-[min(964px,calc((100%-32px)/2))]">
+              <CarouselSlide post={right} isActive={false} navMode="next" onPrev={goPrev} onNext={goNext} />
+            </div>
           </div>
         ) : (
           <div
@@ -42,7 +70,7 @@ export function BlogCarousel({ posts }: Props) {
                 key={p._id}
                 post={p}
                 isActive={slideIndex === active}
-                canCycle={count > 1}
+                navMode={count > 1 ? "both" : "none"}
                 onPrev={goPrev}
                 onNext={goNext}
               />
@@ -51,7 +79,13 @@ export function BlogCarousel({ posts }: Props) {
         )}
 
         {count > 1 ? (
-          <div className="pointer-events-auto absolute bottom-[12px] left-0 right-0 z-[3] flex items-center justify-center gap-[10px]">
+          <div
+            className={
+              pair
+                ? "mt-[16px] flex items-center justify-center gap-[10px]"
+                : "pointer-events-auto absolute bottom-[12px] left-0 right-0 z-[3] flex items-center justify-center gap-[10px]"
+            }
+          >
             {posts.map((_, i) => (
               <button
                 key={i}
@@ -74,6 +108,7 @@ export function BlogCarousel({ posts }: Props) {
 }
 
 type LightZone = "left" | "center" | "right"
+type NavMode = "both" | "prev" | "next" | "none"
 
 function zoneFromPointer(event: React.MouseEvent<HTMLElement>): LightZone {
   const rect = event.currentTarget.getBoundingClientRect()
@@ -86,24 +121,26 @@ function zoneFromPointer(event: React.MouseEvent<HTMLElement>): LightZone {
 function CarouselSlide({
   post,
   isActive,
-  canCycle,
+  navMode,
   onPrev,
   onNext,
 }: {
   post: BlogCarouselPost
   isActive: boolean
-  canCycle: boolean
+  navMode: NavMode
   onPrev: () => void
   onNext: () => void
 }) {
   const src = post.previewImageUrl
   const [zone, setZone] = React.useState<LightZone | null>(null)
+  const showPrev = navMode === "both" || navMode === "prev"
+  const showNext = navMode === "both" || navMode === "next"
 
   return (
     <div className="w-full shrink-0 bg-black">
       {src ? (
         <div
-          className="mk-carousel-slide relative flex aspect-[964/978] h-[978px] w-full items-center overflow-hidden bg-black max-md:h-auto"
+          className="mk-carousel-slide relative flex aspect-[964/978] w-full min-w-0 items-center justify-center overflow-hidden bg-black"
           data-lit={zone ? "true" : "false"}
           data-zone={zone || "none"}
           onMouseMove={(event) => setZone(zoneFromPointer(event))}
@@ -113,13 +150,13 @@ function CarouselSlide({
           <img
             src={src}
             alt={post.imageAlt || post.title || ""}
-            className="relative z-0 w-full max-w-none h-auto"
+            className="relative z-0 mx-auto block h-auto w-full min-w-0 max-w-full object-center"
             width={964}
             height={978}
             decoding="async"
             loading={isActive ? "eager" : "lazy"}
             fetchPriority={isActive ? "high" : "low"}
-            sizes="964px"
+            sizes="(min-width: 1920px) 50vw, 964px"
           />
 
           <div className="mk-carousel-light mk-carousel-light-center" data-on={zone === "center" ? "true" : "false"} />
@@ -134,25 +171,25 @@ function CarouselSlide({
             className="absolute inset-0 z-[1] outline-none"
           />
 
-          {canCycle ? (
-            <>
-              <button
-                type="button"
-                aria-label="上一篇"
-                onClick={onPrev}
-                className="absolute inset-y-0 left-0 z-[2] w-[22%] cursor-w-resize bg-transparent"
-              />
-              <button
-                type="button"
-                aria-label="下一篇"
-                onClick={onNext}
-                className="absolute inset-y-0 right-0 z-[2] w-[22%] cursor-e-resize bg-transparent"
-              />
-            </>
+          {showPrev ? (
+            <button
+              type="button"
+              aria-label="上一篇"
+              onClick={onPrev}
+              className="absolute inset-y-0 left-0 z-[2] w-[22%] cursor-w-resize bg-transparent"
+            />
+          ) : null}
+          {showNext ? (
+            <button
+              type="button"
+              aria-label="下一篇"
+              onClick={onNext}
+              className="absolute inset-y-0 right-0 z-[2] w-[22%] cursor-e-resize bg-transparent"
+            />
           ) : null}
         </div>
       ) : (
-        <div className="aspect-[964/978] h-[978px] w-full bg-black/30 max-md:h-auto" />
+        <div className="aspect-[964/978] w-full bg-black/30" />
       )}
     </div>
   )
