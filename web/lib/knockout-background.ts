@@ -90,36 +90,35 @@ function centerHasSubject(data: Buffer, w: number, h: number, mode: Mode) {
 
 function detectMode(data: Buffer, w: number, h: number): Mode | null {
   if (hasRealAlpha(data, w, h)) return null
-
-  const points = [
-    [0, 0],
-    [w - 1, 0],
-    [0, h - 1],
-    [w - 1, h - 1],
-    [Math.floor(w / 2), 0],
-    [Math.floor(w / 2), h - 1],
-    [0, Math.floor(h / 2)],
-    [w - 1, Math.floor(h / 2)],
-  ]
-  let black = 0
-  let white = 0
-  for (const [x, y] of points) {
-    const i = idx(x, y, w)
-    const r = data[i]
-    const g = data[i + 1]
-    const b = data[i + 2]
-    const a = data[i + 3]
-    if (a < 40) continue
-    const yv = luma(r, g, b)
-    const c = chroma(r, g, b)
-    if (c <= MAX_CHROMA && yv <= BLACK_LUMA + 8) black++
-    if (c <= MAX_CHROMA && yv >= WHITE_LUMA - 8) white++
-  }
-  const mode: Mode | null =
-    black >= 6 && black > white ? "black" : white >= 6 && white > black ? "white" : null
+  const mode = borderMatteMode(data, w, h)
   if (!mode) return null
   if (!centerHasSubject(data, w, h, mode)) return null
   return mode
+}
+
+/** 整圈边是电脑填的纯黑/纯白才算假空白；拍摄出来的黑底、上下黑边都留下来。 */
+function borderMatteMode(data: Buffer, w: number, h: number): Mode | null {
+  const band = 3
+  let n = 0
+  let black = 0
+  let white = 0
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (x >= band && y >= band && x < w - band && y < h - band) continue
+      if ((x + y) % 2 !== 0) continue
+      n++
+      const i = idx(x, y, w)
+      const c = chroma(data[i], data[i + 1], data[i + 2])
+      if (c > 8) continue
+      const yv = luma(data[i], data[i + 1], data[i + 2])
+      if (yv <= 4) black++
+      if (yv >= 248) white++
+    }
+  }
+  if (n < 50) return null
+  if (white / n >= 0.88) return "white"
+  if (black / n >= 0.88) return "black"
+  return null
 }
 
 function floodKnockout(data: Buffer, w: number, h: number, mode: Mode) {
@@ -194,7 +193,7 @@ export function isAllowedKnockoutSource(raw: string) {
 export function knockoutImageSrc(src: string | null | undefined): string | null {
   if (!src) return null
   if (!isAllowedKnockoutSource(src)) return src
-  return `/api/knockout-image?url=${encodeURIComponent(src)}`
+  return `/api/knockout-image?v=2&url=${encodeURIComponent(src)}`
 }
 
 function contentTypeOf(format: string | undefined) {
