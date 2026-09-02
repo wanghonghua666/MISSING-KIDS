@@ -14,6 +14,13 @@ export const siteSettingsQuery = defineQuery(`
   instagramUrl,
   productCtaLabel,
   copyright,
+  headerNav[]{
+    _key,
+    label,
+    linkType,
+    url,
+    "pageSlug": page->slug.current
+  },
   footerNav[]{
     _key,
     label,
@@ -81,6 +88,20 @@ export const productBySlugQuery = defineQuery(`
 export const sitemapEntriesQuery = defineQuery(`
 {
   "posts": *[_type == "post" && defined(slug.current)]{"slug": slug.current, publishedAt, _updatedAt},
-  "products": *[_type == "product" && defined(slug.current)]{"slug": slug.current, _updatedAt}
+  "products": *[_type == "product" && defined(slug.current)]{"slug": slug.current, _updatedAt},
+  "pages": *[_type == "page" && defined(slug.current)]{"slug": slug.current, _updatedAt}
 }
+`)
+
+export const pageBySlugQuery = defineQuery(`
+*[_type == "page" && slug.current == $slug][0]{
+  _id,
+  title,
+  "slug": slug.current,
+  body
+}
+`)
+
+export const allPageSlugsQuery = defineQuery(`
+*[_type == "page" && defined(slug.current)]{"slug": slug.current}
 `)

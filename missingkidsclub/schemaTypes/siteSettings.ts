@@ -21,6 +21,89 @@ export default defineType({
       description: '用于浏览器标签和搜索结果摘要',
     }),
     defineField({
+      name: 'headerNav',
+      title: 'Header navigation',
+      type: 'array',
+      description:
+        '顶栏链接，拖动即可排序。自定义页面请先在左侧 Pages 里创建，再选「Page」挂上来。',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'headerNavItem',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'linkType',
+              title: 'Link to',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Home', value: 'home'},
+                  {title: 'Work', value: 'work'},
+                  {title: 'Page', value: 'page'},
+                  {title: 'External URL', value: 'url'},
+                ],
+                layout: 'radio',
+              },
+              initialValue: 'page',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'page',
+              title: 'Page',
+              type: 'reference',
+              to: [{type: 'page'}],
+              hidden: ({parent}) => parent?.linkType !== 'page',
+              validation: (Rule) =>
+                Rule.custom((value, context) => {
+                  const parent = context.parent as {linkType?: string} | undefined
+                  if (parent?.linkType === 'page' && !value) return '请选择一个页面'
+                  return true
+                }),
+            }),
+            defineField({
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              hidden: ({parent}) => parent?.linkType !== 'url',
+              validation: (Rule) =>
+                Rule.custom((value, context) => {
+                  const parent = context.parent as {linkType?: string} | undefined
+                  if (parent?.linkType !== 'url') return true
+                  if (!value) return '请填写链接'
+                  if (!/^https?:\/\//.test(String(value))) return '用 https:// 完整地址'
+                  return true
+                }),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'label',
+              linkType: 'linkType',
+              url: 'url',
+              pageTitle: 'page.title',
+            },
+            prepare({title, linkType, url, pageTitle}) {
+              const subtitle =
+                linkType === 'home'
+                  ? '/home'
+                  : linkType === 'work'
+                    ? '/work'
+                    : linkType === 'page'
+                      ? pageTitle || 'Page'
+                      : url || 'External'
+              return {title: title || 'Untitled', subtitle}
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
       name: 'footerNav',
       title: 'Footer navigation',
       type: 'array',

@@ -1,4 +1,5 @@
 import { sanityImageUrl } from "@/lib/sanity.image"
+import { knockoutImageSrc } from "@/lib/knockout-background"
 import { sanityClient } from "@/lib/sanity.client"
 import type { BlogCarouselPost } from "@/lib/types/blog-carousel-post"
 import type { SanityImageSource } from "@sanity/image-url"
@@ -25,13 +26,17 @@ const query = `
 }
 `
 
+type CmsImage = SanityImageSource & {
+  alt?: string | null
+}
+
 type Row = {
   _id: string
   title?: string
   slug: string
   publishedAt?: string | null
-  mainImage?: SanityImageSource | null
-  bodyFirstImage?: SanityImageSource | null
+  mainImage?: CmsImage | null
+  bodyFirstImage?: CmsImage | null
 }
 
 /** 首页轮播：宽 964，高 978（1278−300）。只按宽度出图，左右不裁，上下由容器裁 */
@@ -49,17 +54,14 @@ function carouselPreviewUrl(image: SanityImageSource | null | undefined) {
 export async function getBlogPostsForCarousel(): Promise<BlogCarouselPost[]> {
   const raw = (await sanityClient.fetch(query)) as Row[]
   return raw.map((p) => {
-    const mainAlt =
-      p.mainImage && typeof p.mainImage === "object" && "alt" in p.mainImage
-        ? String((p.mainImage as { alt?: string | null }).alt || "")
-        : ""
+    const image = p.mainImage || p.bodyFirstImage
     return {
       _id: p._id,
       title: p.title,
       slug: p.slug,
       publishedAt: p.publishedAt,
-      previewImageUrl: carouselPreviewUrl(p.mainImage) ?? carouselPreviewUrl(p.bodyFirstImage),
-      imageAlt: mainAlt || p.title || "",
+      previewImageUrl: knockoutImageSrc(carouselPreviewUrl(image)),
+      imageAlt: p.mainImage?.alt || p.title || "",
     }
   })
 }

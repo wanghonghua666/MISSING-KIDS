@@ -21,5 +21,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/work/${product.slug}`,
       lastModified: product._updatedAt || new Date(),
     })),
+    ...(data?.pages ?? []).map((page: {slug: string; _updatedAt?: string}) => ({
+      url: `${siteUrl}/${page.slug}`,
+      lastModified: page._updatedAt || new Date(),
+    })),
   ]
 }

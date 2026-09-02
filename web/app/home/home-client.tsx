@@ -6,17 +6,18 @@ import {Footer} from "@/components/layout/footer"
 import {MainContent} from "@/components/layout/main-content"
 import {BlogCarousel} from "@/components/blog/blog-carousel"
 import type {BlogCarouselPost} from "@/lib/types/blog-carousel-post"
-import type {FooterNavItem} from "@/lib/site-settings"
+import type {FooterNavItem, HeaderNavItem} from "@/lib/site-settings"
 
 type Mode = "fromStart" | "normal"
 
 type Props = {
   carouselPosts: BlogCarouselPost[]
+  headerNav?: HeaderNavItem[]
   footerNav?: FooterNavItem[]
   copyright?: string | null
 }
 
-export function HomeClient({carouselPosts, footerNav, copyright}: Props) {
+export function HomeClient({carouselPosts, headerNav, footerNav, copyright}: Props) {
   const [mode, setMode] = React.useState<Mode>(() => {
     if (typeof window === "undefined") return "normal"
     return sessionStorage.getItem("fromStart") === "1" ? "fromStart" : "normal"
@@ -42,7 +43,7 @@ export function HomeClient({carouselPosts, footerNav, copyright}: Props) {
   if (mode === "fromStart") {
     return (
       <div className="mk-from-start w-full min-h-screen flex flex-col">
-        <Header />
+        <Header items={headerNav} />
         <main className="mk-home-stage mk-from-start-main flex-1 w-full flex flex-col items-center justify-center px-6 max-md:px-0">
           {carousel}
         </main>
@@ -53,7 +54,7 @@ export function HomeClient({carouselPosts, footerNav, copyright}: Props) {
 
   return (
     <div className="w-full min-h-screen flex flex-col">
-      <Header />
+      <Header items={headerNav} />
       <MainContent className="mk-home-stage flex-1 w-full flex flex-col items-center justify-center gap-0 mx-0 px-6 max-md:px-0">
         {carousel}
       </MainContent>

@@ -9,6 +9,7 @@ export default async function HomePage() {
   return (
     <HomeClient
       carouselPosts={carouselPosts}
+      headerNav={settings.headerNav}
       footerNav={settings.footerNav}
       copyright={settings.copyright}
     />

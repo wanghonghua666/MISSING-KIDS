@@ -294,7 +294,7 @@ body::before {
 }
 
 .mk-carousel-slide[data-lit="true"] img {
-  filter: brightness(1.18) contrast(1.05);
+  filter: brightness(1.18) contrast(1.05) drop-shadow(0 0 22px rgba(255, 255, 255, 0.28));
 }
 
 .mk-carousel-light {
@@ -305,6 +305,14 @@ body::before {
   opacity: 0;
   transition: opacity 0.45s ease;
   mix-blend-mode: soft-light;
+  -webkit-mask-image: var(--mk-slide-mask);
+  mask-image: var(--mk-slide-mask);
+  -webkit-mask-size: 100% auto;
+  mask-size: 100% auto;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .mk-carousel-light[data-on="true"] {
@@ -380,7 +388,33 @@ body::before {
   width: min(1960px, 100%);
 }
 
-.mk-carousel-pair .mk-carousel-slide {
+.mk-carousel-pair-viewport {
+  container-type: inline-size;
+  --pair-gap: 32px;
+  --pair-card: min(964px, calc((100cqi - var(--pair-gap)) / 2));
+  --pair-step: calc(var(--pair-card) + var(--pair-gap));
+  overflow: hidden;
+  width: 100%;
+}
+
+.mk-carousel-pair-track {
+  display: flex;
+  align-items: center;
+  gap: var(--pair-gap);
+  width: max-content;
+}
+
+.mk-carousel-pair-track[data-anim] {
+  pointer-events: none;
+}
+
+.mk-carousel-pair-track > .mk-carousel-frame {
+  flex: 0 0 var(--pair-card);
+  width: var(--pair-card);
+  min-width: 0;
+}
+
+.mk-carousel-pair-track .mk-carousel-slide {
   height: auto;
 }
 

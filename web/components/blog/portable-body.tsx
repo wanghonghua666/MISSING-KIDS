@@ -1,6 +1,7 @@
 import {PortableText, type PortableTextComponents} from "@portabletext/react"
 import {InstagramEmbed} from "@/components/blog/instagram-embed"
 import {sanityImageUrl} from "@/lib/sanity.image"
+import {knockoutImageSrc} from "@/lib/knockout-background"
 import {
   resolveEmbed,
   toSoundCloudEmbedUrl,
@@ -11,7 +12,7 @@ import {
 const components: PortableTextComponents = {
   types: {
     image: ({value}) => {
-      const src = sanityImageUrl(value, {width: 1600, quality: 88})
+      const src = knockoutImageSrc(sanityImageUrl(value, {width: 1600, quality: 88}))
       if (!src) return null
       return (
         <figure className="my-[16px] flex justify-center w-full">

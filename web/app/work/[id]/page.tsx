@@ -1,7 +1,7 @@
 import type {Metadata} from "next"
 import Image from "next/image"
 import {notFound} from "next/navigation"
-import {Header} from "@/components/layout/header"
+import {SiteHeader} from "@/components/layout/site-header"
 import {Footer} from "@/components/layout/footer"
 import {MainContent} from "@/components/layout/main-content"
 import {TransitionLink} from "@/components/layout/transition-link"
@@ -61,7 +61,7 @@ export default async function WorkDetailPage({params}: Props) {
 
   return (
     <div className="w-full min-h-screen flex flex-col">
-      <Header />
+      <SiteHeader />
       <MainContent className="flex-1 w-full flex items-center justify-center gap-0 pt-[180px] pb-[90px] pl-[120px] pr-[120px] mt-[90px] mb-[90px]">
         <div className="w-full max-w-[960px] md:max-w-[1280px] flex flex-col md:flex-row items-center justify-start gap-[40px] p-[32px] md:p-[48px] mk-glass-blur-18 mk-work-layout text-left">
           <div className="min-w-0 w-full max-w-[786px] h-fit rounded-xl overflow-visible flex flex-col items-center gap-0 px-0 mx-0 mk-product-hero mk-product-hero-scroll">

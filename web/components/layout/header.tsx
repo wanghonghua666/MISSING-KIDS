@@ -1,16 +1,26 @@
 "use client"
 
 import * as React from "react"
-import { TransitionLink } from "@/components/layout/transition-link"
+import {TransitionLink} from "@/components/layout/transition-link"
+import type {HeaderNavItem} from "@/lib/site-settings"
 
-export function Header() {
+type Props = {
+  items?: HeaderNavItem[]
+}
+
+const FALLBACK: HeaderNavItem[] = [
+  {_key: "home", label: "Home", href: "/home", external: false},
+  {_key: "work", label: "Work", href: "/work", external: false},
+]
+
+export function Header({items}: Props) {
   const [menuOpen, setMenuOpen] = React.useState(false)
+  const nav = items && items.length > 0 ? items : FALLBACK
 
   return (
     <>
       <header className="mk-header">
         <TransitionLink href="/home" className="mk-logo-link flex items-center">
-          {/* Logo 来自 web/public/logo.png；改图请替换该文件。?v= 用于避开浏览器强缓存旧图 */}
           <img
             src="/logo.png?v=4"
             alt="MissingKids Lab"
@@ -22,17 +32,20 @@ export function Header() {
           />
         </TransitionLink>
 
-        {/* Desktop nav — hidden on mobile via CSS */}
-        <nav className="mk-desktop-nav w-[212px] h-[52px] flex items-center justify-center gap-[32px]">
-          <TransitionLink href="/home" className="mk-mono w-[77px] h-[33px] flex items-center justify-center text-[20px] font-semibold leading-[30px] text-[#ef4444]">
-            Home
-          </TransitionLink>
-          <TransitionLink href="/work" className="mk-mono w-[77px] h-[33px] flex items-center justify-center text-[20px] font-semibold leading-[30px] text-[#ef4444]">
-            Work
-          </TransitionLink>
+        <nav className="mk-desktop-nav h-[52px] w-auto max-w-[min(640px,52vw)] flex items-center justify-end gap-[32px]">
+          {nav.map((item) => (
+            <TransitionLink
+              key={item._key}
+              href={item.href}
+              target={item.external ? "_blank" : undefined}
+              rel={item.external ? "noopener noreferrer" : undefined}
+              className="mk-mono h-[33px] flex items-center justify-center text-[20px] font-semibold leading-[30px] text-[#ef4444] whitespace-nowrap"
+            >
+              {item.label}
+            </TransitionLink>
+          ))}
         </nav>
 
-        {/* Mobile hamburger — hidden on desktop via CSS */}
         <button
           className="mk-mobile-menu mk-hover-bright"
           aria-label="Menu"
@@ -46,7 +59,6 @@ export function Header() {
         </button>
       </header>
 
-      {/* Mobile nav overlay */}
       {menuOpen && (
         <div className="mk-mobile-nav-overlay" onClick={() => setMenuOpen(false)}>
           <div className="mk-mobile-nav-panel" onClick={(e) => e.stopPropagation()}>
@@ -57,12 +69,18 @@ export function Header() {
               </svg>
             </button>
             <nav className="mk-mobile-nav-links">
-              <TransitionLink href="/home" className="mk-mono text-[28px] font-semibold text-[#ef4444]" onClick={() => setMenuOpen(false)}>
-                Home
-              </TransitionLink>
-              <TransitionLink href="/work" className="mk-mono text-[28px] font-semibold text-[#ef4444]" onClick={() => setMenuOpen(false)}>
-                Work
-              </TransitionLink>
+              {nav.map((item) => (
+                <TransitionLink
+                  key={item._key}
+                  href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
+                  className="mk-mono text-[28px] font-semibold text-[#ef4444]"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item.label}
+                </TransitionLink>
+              ))}
             </nav>
           </div>
         </div>
