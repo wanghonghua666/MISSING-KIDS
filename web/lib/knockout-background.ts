@@ -191,8 +191,8 @@ export function isAllowedKnockoutSource(raw: string) {
   }
 }
 
-export function knockoutImageSrc(src: string | null | undefined) {
-  if (!src) return src
+export function knockoutImageSrc(src: string | null | undefined): string | null {
+  if (!src) return null
   if (!isAllowedKnockoutSource(src)) return src
   return `/api/knockout-image?url=${encodeURIComponent(src)}`
 }
